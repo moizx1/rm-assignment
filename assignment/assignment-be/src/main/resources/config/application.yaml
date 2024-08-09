@@ -1,0 +1,47 @@
+spring:
+  config:
+    import: file:env.properties
+  #  h2:
+#    console:
+#      enabled: true
+#      settings:
+#        web-allow-others: true
+#        trace: true
+  datasource:
+    url: jdbc:mysql://localhost:3306/FinNest
+    username: test
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+#    initialization-mode: always
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    open-in-view: false
+    show-sql: true
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.yaml
+api:
+  security:
+    ignored: /swagger-ui/**,/h2-console,/h2-console/**,/v3/api-docs,/v2/api-docs
+
+jwt:
+  secret: UGEzLf3ug6HdJy7nEaVZjIxraYsbNIbt4AIBpgTAgTQ=
+  expiration: 3600000
+
+
+logging:
+  config: classpath:logback-spring.xml
+
+#management:
+#  endpoint:
+#    health:
+#      show-details: always
+#  endpoints:
+#    web:
+#      exposure:
+#        include: '*'
+
+
+
+
