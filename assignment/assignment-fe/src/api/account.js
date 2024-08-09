@@ -4,7 +4,7 @@ import { API_BASE_URL } from "../constants/apiConstants";
 const token = localStorage.getItem("authToken");
 
 export const createAccountApi = async (accountData) => {
-  const response = await axios.post(`${API_BASE_URL}/user`, accountData, {
+  const response = await axios.post(`${API_BASE_URL}/users`, accountData, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -14,7 +14,27 @@ export const createAccountApi = async (accountData) => {
 };
 
 export const fetchAccountsApi = async () => {
-  const response = await axios.get(`${API_BASE_URL}/account`, {
+  const response = await axios.get(`${API_BASE_URL}/accounts`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const fetchAccountById = async (accountId) => {
+  const response = await axios.get(`${API_BASE_URL}/accounts/${accountId}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
+};
+
+export const fetchBalanceApi = async (accountId) => {
+  const response = await axios.get(`${API_BASE_URL}/accounts/${accountId}/balance`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
@@ -25,8 +45,8 @@ export const fetchAccountsApi = async () => {
 
 export const updateAccountApi = async (accountData) => {
   console.log(accountData);
-  const response = await axios.put(
-    `${API_BASE_URL}/account/update`,
+  const response = await axios.patch(
+    `${API_BASE_URL}/accounts/${accountData.userId}`,
     accountData,
     {
       headers: {
@@ -39,7 +59,7 @@ export const updateAccountApi = async (accountData) => {
 };
 
 export const deleteAccountApi = async (userId) => {
-  const response = await axios.delete(`${API_BASE_URL}/account/${userId}`, {
+  const response = await axios.delete(`${API_BASE_URL}/accounts/${userId}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,

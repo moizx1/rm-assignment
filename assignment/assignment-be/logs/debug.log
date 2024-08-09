@@ -1482,7 +1482,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
 	at com.redmath.assignment.Application.main(Application.java:9)
 2024-08-02 02:48:13 [main] DEBUG o.s.d.j.repository.query.NamedQuery - Did not find named query Account.findAllAccountResponses.count
 2024-08-02 02:48:13 [main] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
-2024-08-02 02:48:13 [main] DEBUG org.hibernate.orm.query.hql - HQL : SELECT new com.redmath.assignment.account.UpdateAccountDto
+2024-08-02 02:48:13 [main] DEBUG org.hibernate.orm.query.hql - HQL : SELECT new com.redmath.assignment.account.AccountDto
 (a.accountId, u.userId, u.name, u.username, a.accountNumber, a.balance, u.address, u.dob) FROM Account a JOIN User u ON a.userId = u.userId
 2024-08-02 02:48:13 [main] DEBUG org.hibernate.orm.query.hql - Unable to resolve unqualified attribute [User] in local from-clause
 2024-08-02 02:48:14 [main] DEBUG org.hibernate.orm.query.sqm.ast - SqmStatement Tree :
@@ -1490,7 +1490,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
       -> [query-spec]
         -> [select]
           -> [selection]
-            -> [dynamic-instantiation (class com.redmath.assignment.account.UpdateAccountDto)]
+            -> [dynamic-instantiation (class com.redmath.assignment.account.AccountDto)]
               -> [arguments]
                 -> [argument (null)]
                     -> [basic-path] - `com.redmath.assignment.account.Account(a).accountId`
@@ -1517,7 +1517,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
                     -> [basic-path] - `com.redmath.assignment.user.User(u).dob`
                 <- [argument (null)]
               <- [arguments]
-            <- [dynamic-instantiation (class com.redmath.assignment.account.UpdateAccountDto)]
+            <- [dynamic-instantiation (class com.redmath.assignment.account.AccountDto)]
           <- [selection]
         <- [select]
         -> [from]
@@ -6069,7 +6069,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
 	at com.redmath.assignment.Application.main(Application.java:9)
 2024-08-02 02:49:08 [main] DEBUG o.s.d.j.repository.query.NamedQuery - Did not find named query Account.findAllAccountResponses.count
 2024-08-02 02:49:08 [main] DEBUG o.s.o.j.SharedEntityManagerCreator$SharedEntityManagerInvocationHandler - Creating new EntityManager for shared EntityManager invocation
-2024-08-02 02:49:08 [main] DEBUG org.hibernate.orm.query.hql - HQL : SELECT new com.redmath.assignment.account.UpdateAccountDto
+2024-08-02 02:49:08 [main] DEBUG org.hibernate.orm.query.hql - HQL : SELECT new com.redmath.assignment.account.AccountDto
 (a.accountId, u.userId, u.name, u.username, a.accountNumber, a.balance, u.address, u.dob) FROM Account a JOIN User u ON a.userId = u.userId
 2024-08-02 02:49:08 [main] DEBUG org.hibernate.orm.query.hql - Unable to resolve unqualified attribute [User] in local from-clause
 2024-08-02 02:49:08 [main] DEBUG org.hibernate.orm.query.sqm.ast - SqmStatement Tree :
@@ -6077,7 +6077,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
       -> [query-spec]
         -> [select]
           -> [selection]
-            -> [dynamic-instantiation (class com.redmath.assignment.account.UpdateAccountDto)]
+            -> [dynamic-instantiation (class com.redmath.assignment.account.AccountDto)]
               -> [arguments]
                 -> [argument (null)]
                     -> [basic-path] - `com.redmath.assignment.account.Account(a).accountId`
@@ -6104,7 +6104,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
                     -> [basic-path] - `com.redmath.assignment.user.User(u).dob`
                 <- [argument (null)]
               <- [arguments]
-            <- [dynamic-instantiation (class com.redmath.assignment.account.UpdateAccountDto)]
+            <- [dynamic-instantiation (class com.redmath.assignment.account.AccountDto)]
           <- [selection]
         <- [select]
         -> [from]

@@ -1141,14 +1141,14 @@ java.lang.Exception: exception just for purpose of providing stack trace
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1363)
 	at org.springframework.boot.SpringApplication.run(SpringApplication.java:1352)
 	at com.redmath.assignment.Application.main(Application.java:9)
-2024-08-06 16:00:48.591 [main] DEBUG org.hibernate.orm.query.hql - HQL : SELECT new com.redmath.assignment.account.UpdateAccountDto(a.accountId, u.userId, u.name, u.username, a.accountNumber, a.balance, u.address, u.dob) FROM Account a JOIN User u ON a.userId = u.userId
+2024-08-06 16:00:48.591 [main] DEBUG org.hibernate.orm.query.hql - HQL : SELECT new com.redmath.assignment.account.AccountDto(a.accountId, u.userId, u.name, u.username, a.accountNumber, a.balance, u.address, u.dob) FROM Account a JOIN User u ON a.userId = u.userId
 2024-08-06 16:00:48.838 [main] DEBUG org.hibernate.orm.query.hql - Unable to resolve unqualified attribute [User] in local from-clause
 2024-08-06 16:00:48.869 [main] DEBUG org.hibernate.orm.query.sqm.ast - SqmStatement Tree :
     -> [select]
       -> [query-spec]
         -> [select]
           -> [selection]
-            -> [dynamic-instantiation (class com.redmath.assignment.account.UpdateAccountDto)]
+            -> [dynamic-instantiation (class com.redmath.assignment.account.AccountDto)]
               -> [arguments]
                 -> [argument (null)]
                     -> [basic-path] - `com.redmath.assignment.account.Account(a).accountId`
@@ -1175,7 +1175,7 @@ java.lang.Exception: exception just for purpose of providing stack trace
                     -> [basic-path] - `com.redmath.assignment.user.User(u).dob`
                 <- [argument (null)]
               <- [arguments]
-            <- [dynamic-instantiation (class com.redmath.assignment.account.UpdateAccountDto)]
+            <- [dynamic-instantiation (class com.redmath.assignment.account.AccountDto)]
           <- [selection]
         <- [select]
         -> [from]

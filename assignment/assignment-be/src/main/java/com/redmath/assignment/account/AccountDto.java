@@ -1,6 +1,7 @@
 package com.redmath.assignment.account;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -9,7 +10,8 @@ import java.util.Date;
 @Getter
 @Setter
 @SuppressWarnings("checkstyle:ParameterNumber")
-public class UpdateAccountDto {
+@NoArgsConstructor
+public class AccountDto {
 
     private Long accountId;
     private Long userId;
@@ -20,8 +22,8 @@ public class UpdateAccountDto {
     private String address;
     private Date dob;
 
-    public UpdateAccountDto(Long accountId, Long userId, String name, String username, String accountNumber, BigDecimal balance, String address,
-                            Date dob) {
+    public AccountDto(Long accountId, Long userId, String name, String username, String accountNumber, BigDecimal balance, String address,
+                      Date dob) {
         this.accountId = accountId;
         this.userId = userId;
         this.name = name;

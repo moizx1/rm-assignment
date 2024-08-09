@@ -12,11 +12,11 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Account findByUserId(Long userId);
     Optional<Account> findByAccountNumber(String accountNumber);
     @Query(
-            "SELECT new com.redmath.assignment.account.UpdateAccountDto("
+            "SELECT new com.redmath.assignment.account.AccountDto("
                     + "a.accountId, u.userId, u.name, u.username, a.accountNumber, a.balance, "
                     + "u.address, u.dob) "
                     + "FROM Account a "
                     + "JOIN User u ON a.userId = u.userId"
     )
-    List<UpdateAccountDto> findAllAccountResponses();
+    List<AccountDto> findAllAccountResponses();
 }

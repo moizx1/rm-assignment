@@ -11,11 +11,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 public class UserResponse {
     private Long userId;
-    private String username;
     private String name;
     private Long accountId;
-    private String accountNumber;
-    private BigDecimal balance;
     private String role;
     private String jwt;
 }

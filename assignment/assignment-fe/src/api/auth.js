@@ -13,7 +13,7 @@ export const login = async (username, password) => {
 };
 
 export const fetchTransactionHistoryApi = async (accountId, token) => {
-  const response = await axios.get(`${API_BASE_URL}/transaction/${accountId}`, {
+  const response = await axios.get(`${API_BASE_URL}/transactions/${accountId}`, {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response.data;

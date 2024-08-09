@@ -4,6 +4,7 @@ import com.redmath.assignment.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -12,11 +13,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/account")
+@RequestMapping("/api/v2/accounts")
 public class AccountController {
 
     @Autowired
@@ -26,25 +28,45 @@ public class AccountController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<List<UpdateAccountDto>> getAccounts() {
-        final List<UpdateAccountDto> accountResponses = accountService.getAccounts();
+    public ResponseEntity<List<AccountDto>> getAccounts() {
+        final List<AccountDto> accountResponses = accountService.getAccounts();
         return ResponseEntity.ok(accountResponses);
     }
 
-    @GetMapping("/details/{accountNumber}")
-    public ResponseEntity<?> getAccountDetails(@PathVariable String accountNumber) {
-        AccountDetailsResponse account = accountService.getAccountDetails(accountNumber);
-        if (account == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Account not found with account number"));
+    @GetMapping("/{accountId}")
+    public ResponseEntity<?> getAccountDetails(@PathVariable Long accountId) {
+        AccountDto accountDto = accountService.getAccountById(accountId);
+        if (accountDto == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Account not found with account id"));
         } else {
-            return ResponseEntity.ok(account);
+            return ResponseEntity.ok(accountDto);
         }
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<?> updateAccount(@RequestBody UpdateAccountDto updateAccountDto) {
+    @GetMapping("/{accountNumber}/details")
+    public ResponseEntity<?> getAccountDetails(@PathVariable String accountNumber) {
+        AccountDetailsResponse accountDetailsResponse = accountService.getAccountDetails(accountNumber);
+        if (accountDetailsResponse == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Account not found with account number"));
+        } else {
+            return ResponseEntity.ok(accountDetailsResponse);
+        }
+    }
+
+    @GetMapping("/{accountId}/balance")
+    public ResponseEntity<?> getBalance(@PathVariable Long accountId){
+        BigDecimal balance = accountService.getBalance(accountId);
+        if (balance == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Account not found with account id"));
+        } else {
+            return ResponseEntity.ok(Map.of("balance", balance));
+        }
+    }
+
+    @PatchMapping("/{userId}")
+    public ResponseEntity<?> updateAccount(@PathVariable Long userId, @RequestBody AccountDto updateAccountDto) {
         try {
-            String response = accountService.updateAccount(updateAccountDto);
+            String response = accountService.updateAccount(userId, updateAccountDto);
             if (response.equals("User not found")) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", response));
             }
@@ -55,7 +77,7 @@ public class AccountController {
         }
     }
 
-    @DeleteMapping("/{accountId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<?> deleteAccount(@PathVariable Long accountId) {
         try {
             accountService.deleteByAccountId(accountId);

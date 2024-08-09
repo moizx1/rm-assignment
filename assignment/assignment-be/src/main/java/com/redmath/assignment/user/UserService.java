@@ -45,11 +45,8 @@ public class UserService {
 
             UserResponse response = new UserResponse();
             response.setUserId(result.getUserId());
-            response.setUsername(result.getUsername());
             response.setName(result.getName());
             response.setAccountId(accountResponse.getAccountId());
-            response.setAccountNumber(accountResponse.getAccountNumber());
-            response.setBalance(accountResponse.getBalance());
             response.setRole(result.getRoles());
             response.setJwt(jwtUtil.generateToken(result.getUsername()));
 
@@ -67,20 +64,6 @@ public class UserService {
     public User getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
         return user.orElse(null);
-    }
-
-    public User updateUser(Long id, User userDetails) throws RuntimeException {
-        Optional<User> optionalUser = userRepository.findById(id);
-        if (optionalUser.isEmpty()) {
-            throw new RuntimeException("User not found with id: " + id);
-        }
-        User user = optionalUser.get();
-        user.setUsername(userDetails.getUsername());
-        user.setPassword(userDetails.getPassword());
-        user.setName(userDetails.getName());
-        user.setDob(userDetails.getDob());
-        user.setRoles(userDetails.getRoles());
-        return userRepository.save(user);
     }
 
 }

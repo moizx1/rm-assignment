@@ -74,7 +74,7 @@ public class ApiSecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
@@ -86,17 +86,9 @@ public class ApiSecurityConfiguration {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 //        http.headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
             http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(config -> config.requestMatchers(HttpMethod.POST, "/api/v1/auth/**").permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/api/v1/account", "/api/v1/account/**").permitAll()
-//                        .requestMatchers(HttpMethod.POST, "/api/v1/account", "/api/v1/account/**").permitAll()
-//                        .requestMatchers(HttpMethod.PUT, "/api/v1/account", "/api/v1/account/**").permitAll()
-//                        .requestMatchers(HttpMethod.DELETE, "/api/v1/account", "/api/v1/account/**").permitAll()
+                .authorizeHttpRequests(config -> config.requestMatchers(HttpMethod.POST, "/api/v2/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v2/users/**").permitAll()
                         .requestMatchers("/h2-console/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui/swagger-config.json").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/user/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/api/v1/user/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/user/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/user/**").permitAll()
-//                        .requestMatchers("/api/v1/transaction/**").permitAll()
                         .anyRequest().authenticated()).exceptionHandling(handling -> {
                     handling.authenticationEntryPoint(new JwtAuthenticationEntryPoint());
                 }).sessionManagement(management -> management.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

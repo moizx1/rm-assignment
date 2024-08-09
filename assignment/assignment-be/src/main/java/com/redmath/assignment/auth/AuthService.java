@@ -45,15 +45,11 @@ public class AuthService {
         if(user.getRoles().equals("USER")) {
             Account account = accountRepository.findByUserId(user.getUserId());
             response.setUserId(user.getUserId());
-            response.setUsername(user.getUsername());
             response.setName(user.getName());
             response.setAccountId(account.getAccountId());
-            response.setAccountNumber(account.getAccountNumber());
-            response.setBalance(account.getBalance());
         }
         else {
             response.setUserId(user.getUserId());
-            response.setUsername(user.getUsername());
             response.setName(user.getName());
         }
         response.setRole(user.getRoles());

@@ -3,8 +3,7 @@ import { toast } from "react-toastify";
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi, fetchTransactionHistoryApi } from "../api/auth";
-import { createAccountApi } from "../api/account";
-import { getAccountDetails } from "../api/transaction";
+import { createAccountApi, fetchBalanceApi } from "../api/account";
 
 export const AuthContext = createContext();
 
@@ -18,11 +17,8 @@ export const AuthProvider = ({ children }) => {
       ? JSON.parse(storedUser)
       : {
           userId: null,
-          username: null,
           name: null,
           accountId: null,
-          accountNumber: null,
-          balance: null,
           role: null,
           token: localStorage.getItem("authToken"),
         };
@@ -88,8 +84,8 @@ export const AuthProvider = ({ children }) => {
         user.token
       );
       setTransactionHistory(response);
-      const updatedDetails = await getAccountDetails(user.accountNumber);
-      const updatedUser = { ...user, balance: updatedDetails.data.balance };
+      const balance = await fetchBalanceApi(user.accountId);
+      const updatedUser = { ...user, balance: balance };
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
     } catch (error) {
@@ -103,10 +99,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser({
       userId: null,
-      username: null,
       name: null,
       accountId: null,
-      accountNumber: null,
       role: null,
       token: null,
     });

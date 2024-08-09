@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/transaction")
+@RequestMapping("/api/v2/transactions")
 public class TransactionController {
 
     @Autowired
@@ -35,8 +35,8 @@ public class TransactionController {
         }
     }
 
-    @PostMapping("/submit")
-    public ResponseEntity<?> submitTransaction(@Validated @RequestBody TransactionRequest request) {
+    @PostMapping
+    public ResponseEntity<?> performTransaction(@Validated @RequestBody TransactionRequest request) {
         try {
             transactionService.submitTransaction(request);
             return ResponseEntity.ok("Transaction successful");

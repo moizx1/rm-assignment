@@ -27,8 +27,26 @@ public class AccountService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<UpdateAccountDto> getAccounts() {
+    public List<AccountDto> getAccounts() {
         return accountRepository.findAllAccountResponses();
+    }
+
+    public AccountDto getAccountById(Long accountId){
+        Optional<Account> account = accountRepository.findById(accountId);
+        AccountDto accountDto = new AccountDto();
+        if(account.isPresent() && account.get().getUserId() != null){
+            Optional<User> user = userRepository.findById(account.get().getUserId());
+            accountDto.setAccountId(accountId);
+            accountDto.setAccountNumber(account.get().getAccountNumber());
+            accountDto.setName(user.get().getName());
+            accountDto.setUserId(user.get().getUserId());
+            accountDto.setBalance(account.get().getBalance());
+            accountDto.setUsername(user.get().getUsername());
+            accountDto.setAddress(user.get().getAddress());
+            accountDto.setDob(user.get().getDob());
+            return accountDto;
+        }
+        return accountDto;
     }
 
     public AccountDetailsResponse getAccountDetails(String accountNumber) {
@@ -36,6 +54,15 @@ public class AccountService {
         if (account.isPresent() && account.get().getUserId() != null) {
             Optional<User> user = userRepository.findById(account.get().getUserId());
             return new AccountDetailsResponse(user.get().getName(), user.get().getUserId(), account.get().getBalance());
+        } else {
+            return null;
+        }
+    }
+
+    public BigDecimal getBalance(Long accountId) {
+        Optional<Account> account = accountRepository.findById(accountId);
+        if (account.isPresent() && account.get().getUserId() != null) {
+            return account.get().getBalance();
         } else {
             return null;
         }
@@ -52,8 +79,8 @@ public class AccountService {
     }
 
     @Transactional
-    public String updateAccount(UpdateAccountDto updateAccountDto) {
-        Optional<User> findUser = userRepository.findById(updateAccountDto.getUserId());
+    public String updateAccount(Long userId, AccountDto updateAccountDto) {
+        Optional<User> findUser = userRepository.findById(userId);
         if (findUser.isEmpty()) {
             return "User not found";
         }
