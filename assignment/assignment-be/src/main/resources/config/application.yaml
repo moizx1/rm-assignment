@@ -9,8 +9,8 @@ spring:
 #        trace: true
   datasource:
     url: jdbc:mysql://localhost:3306/FinNest
-    username: test
-    password: ${DB_PASSWORD}
+    username: root
+    password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    initialization-mode: always
   jpa:

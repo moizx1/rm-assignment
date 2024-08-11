@@ -65,7 +65,7 @@ const AdminDashboard = () => {
       toast.success('Account deleted successfully!', {className: 'bg-gray-900 bg-opacity-50 text-white'});
     } catch (error) {
       setError(error.response?.data);
-      toast.error('Failed to delete account.', {className: 'bg-gray-900 bg-opacity-50 text-white'});
+      toast.error(`Failed to delete account. ${error.response?.data}`, {className: 'bg-gray-900 bg-opacity-50 text-white'});
     }
     setAccountToDelete(null);
   };
@@ -96,8 +96,9 @@ const AdminDashboard = () => {
       setShowForm(false);
       setFormData(resetForm());
     } catch (error) {
-      setError(error.response?.data);
-      toast.error('Failed to process account.', {className: 'bg-gray-900 bg-opacity-50 text-white'});
+      console.log(error)
+      setError(error.response?.data.message);
+      toast.error(`Failed to process account. ${error.response?.data.message}`, {className: 'bg-gray-900 bg-opacity-50 text-white'});
     }
   };
 
@@ -131,7 +132,6 @@ const AdminDashboard = () => {
             onEdit={handleEditClick}
             onDelete={handleDeleteClick}
           />
-          {error && <p className={`text-red-500 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{error}</p>}
           {accountToDelete && (
             <ConfirmationDialog
               message="Are you sure you want to delete this account?"

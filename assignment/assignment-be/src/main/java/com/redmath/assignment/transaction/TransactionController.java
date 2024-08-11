@@ -1,16 +1,13 @@
 package com.redmath.assignment.transaction;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v2/transactions")
@@ -21,17 +18,21 @@ public class TransactionController {
 
 
     @GetMapping
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAllTransactions(@RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                @RequestParam(name = "size", defaultValue = "1000") Integer size) {
         return transactionService.getAllTransactions();
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<List<Transaction>> getTransactionsByAccountId(@PathVariable Long accountId) {
-        List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
-        if (transactions.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        } else {
+    public ResponseEntity<?> getTransactionsByAccountId(@PathVariable Long accountId, @RequestParam(name = "page", defaultValue = "0") Integer page,
+                                                        @RequestParam(name = "size", defaultValue = "1000") Integer size) {
+        try {
+            List<Transaction> transactions = transactionService.getTransactionsByAccountId(accountId);
             return ResponseEntity.ok(transactions);
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to update account. Please try again. " + e.getMessage()));
         }
     }
 

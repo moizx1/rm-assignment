@@ -85,9 +85,9 @@ public class ApiSecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 //        http.headers(httpSecurityHeadersConfigurer -> httpSecurityHeadersConfigurer.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin))
-            http.csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(config -> config.requestMatchers(HttpMethod.POST, "/api/v2/auth/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v2/users/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v2/users").permitAll()
                         .requestMatchers("/h2-console/**", "/swagger-ui/**", "/v3/api-docs", "/swagger-ui/swagger-config.json").permitAll()
                         .anyRequest().authenticated()).exceptionHandling(handling -> {
                     handling.authenticationEntryPoint(new JwtAuthenticationEntryPoint());

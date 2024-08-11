@@ -3,13 +3,16 @@ package com.redmath.assignment.user;
 import com.redmath.assignment.account.Account;
 import com.redmath.assignment.account.AccountService;
 import com.redmath.assignment.utility.JwtUtil;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -20,16 +23,20 @@ public class UserService {
 
     @Autowired
     private JwtUtil jwtUtil;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private AccountService accountService;
 
+    @Transactional
     public ResponseEntity<?> createUser(UserRequest userRequest) {
         try {
-            if (userRepository.findByUsername(userRequest.getUsername()) != null) {
+            if (userRepository.findByUsername(userRequest.getUsername()).isPresent()) {
                 log.debug("User already exists");
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("message", "User already exists"));
             }
@@ -48,22 +55,18 @@ public class UserService {
             response.setName(result.getName());
             response.setAccountId(accountResponse.getAccountId());
             response.setRole(result.getRoles());
-            response.setJwt(jwtUtil.generateToken(result.getUsername()));
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            String jwt = jwtUtil.generateToken(result.getUsername());
+            return ResponseEntity.status(HttpStatus.CREATED).header(HttpHeaders.AUTHORIZATION, "Bearer " + jwt).body(response);
         } catch (Exception e) {
             log.error("Error creating user: ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message",  e.getMessage()));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", e.getMessage()));
         }
-    }
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
     }
 
     public User getUserById(Long id) {
         Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        return user.get();
     }
 
 }

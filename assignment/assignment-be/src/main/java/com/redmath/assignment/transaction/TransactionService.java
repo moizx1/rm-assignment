@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,11 +26,13 @@ public class TransactionService {
     private UserRepository userRepository;
 
     public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
+        List<Transaction> transactions = transactionRepository.findAll();
+        return transactions.isEmpty() ? transactions : Collections.emptyList();
     }
 
     public List<Transaction> getTransactionsByAccountId(Long accountId) {
-        return transactionRepository.findByAccountId(accountId);
+        List<Transaction> transactions = transactionRepository.findByAccountId(accountId);
+        return transactions.isEmpty() ? transactions : Collections.emptyList();
     }
 
     public Transaction saveTransaction(Transaction transaction) {
@@ -77,7 +80,4 @@ public class TransactionService {
         accountRepository.save(toAccount);
     }
 
-    public void deleteTransaction(Long id) {
-        transactionRepository.deleteById(id);
-    }
 }

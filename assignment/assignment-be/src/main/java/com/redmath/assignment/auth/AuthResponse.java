@@ -12,5 +12,4 @@ public class AuthResponse {
     private Long accountId;
     private String name;
     private String role;
-    private String jwt;
 }
