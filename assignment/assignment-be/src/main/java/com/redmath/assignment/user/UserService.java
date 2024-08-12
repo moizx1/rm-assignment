@@ -42,7 +42,7 @@ public class UserService {
             }
             User user = new User();
             user.setUsername(userRequest.getUsername());
-            user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
+            user.setPassword(userRequest.getPassword());
             user.setName(userRequest.getName());
             user.setDob(userRequest.getDob());
             user.setAddress(userRequest.getAddress());

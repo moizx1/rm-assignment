@@ -1,25 +1,19 @@
 import axios from "axios";
 import { API_BASE_URL } from "../constants/apiConstants";
 
-const authToken = localStorage.getItem("authToken");
-
 export const createAccountApi = async (accountData) => {
+  const authToken = localStorage.getItem("authToken");
+
   const response = await axios.post(`${API_BASE_URL}/users`, accountData, {
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const token = response.headers.get("Authorization");
-  console.log(token);
-  if (token) {
-    const expirationTime = new Date().getTime() + 3600 * 1000;
-    localStorage.setItem("authToken", token);
-    localStorage.setItem("tokenExpiration", expirationTime);
-  }
-  return response.data;
+  return response;
 };
 
 export const fetchAccountsApi = async () => {
+  const authToken = localStorage.getItem("authToken");
   const response = await axios.get(`${API_BASE_URL}/accounts`, {
     headers: {
       "Content-Type": "application/json",
@@ -30,6 +24,7 @@ export const fetchAccountsApi = async () => {
 };
 
 export const fetchAccountById = async (accountId) => {
+  const authToken = localStorage.getItem("authToken");
   const response = await axios.get(`${API_BASE_URL}/accounts/${accountId}`, {
     headers: {
       "Content-Type": "application/json",
@@ -40,7 +35,7 @@ export const fetchAccountById = async (accountId) => {
 };
 
 export const fetchBalanceApi = async (accountId) => {
-  // console.log(authToken)
+  const authToken = localStorage.getItem("authToken");
   const response = await axios.get(
     `${API_BASE_URL}/accounts/${accountId}/balance`,
     {
@@ -54,6 +49,7 @@ export const fetchBalanceApi = async (accountId) => {
 };
 
 export const updateAccountApi = async (accountData) => {
+  const authToken = localStorage.getItem("authToken");
   const response = await axios.patch(
     `${API_BASE_URL}/accounts/${accountData.userId}`,
     accountData,
@@ -68,6 +64,7 @@ export const updateAccountApi = async (accountData) => {
 };
 
 export const deleteAccountApi = async (userId) => {
+  const authToken = localStorage.getItem("authToken");
   const response = await axios.delete(`${API_BASE_URL}/accounts/${userId}`, {
     headers: {
       "Content-Type": "application/json",

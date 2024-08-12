@@ -4,6 +4,7 @@ import com.redmath.assignment.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -21,6 +22,7 @@ public class AccountController {
     private UserService userService;
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<List<AccountDto>> getAccounts(@RequestParam(name = "page", defaultValue = "0") Integer page,
                                                         @RequestParam(name = "size", defaultValue = "1000") Integer size) {
         final List<AccountDto> accountResponses = accountService.getAccounts(page, size);
@@ -28,7 +30,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}")
-    public ResponseEntity<?> getAccountDetails(@PathVariable Long accountId) {
+    public ResponseEntity<?> getAccount(@PathVariable Long accountId) {
         AccountDto accountDto = accountService.getAccountById(accountId);
         if (accountDto == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Account not found with account id"));
@@ -38,6 +40,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountNumber}/details")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<?> getAccountDetails(@PathVariable String accountNumber) {
         AccountDetailsResponse accountDetailsResponse = accountService.getAccountDetails(accountNumber);
         if (accountDetailsResponse == null) {
@@ -48,6 +51,7 @@ public class AccountController {
     }
 
     @GetMapping("/{accountId}/balance")
+    @PreAuthorize("hasAnyAuthority('USER')")
     public ResponseEntity<?> getBalance(@PathVariable Long accountId){
         BigDecimal balance = accountService.getBalance(accountId);
         if (balance == null) {
@@ -58,6 +62,7 @@ public class AccountController {
     }
 
     @PatchMapping("/{userId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
     public ResponseEntity<?> updateAccount(@PathVariable Long userId, @RequestBody AccountDto updateAccountDto) {
         try {
             String response = accountService.updateAccount(userId, updateAccountDto);
@@ -72,6 +77,7 @@ public class AccountController {
     }
 
     @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> deleteAccount(@PathVariable Long userId) {
         try {
             accountService.deleteByAccountId(userId);

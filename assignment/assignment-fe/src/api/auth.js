@@ -10,10 +10,9 @@ export const login = async (username, password) => {
     }
   );
   const token = response.headers.get("Authorization");
-  console.log(token);
   if (token) {
     const expirationTime = new Date().getTime() + 3600 * 1000;
-    localStorage.setItem("authToken", token);
+    localStorage.setItem("authToken", token.split(" ")[1]);
     localStorage.setItem("tokenExpiration", expirationTime);
   }
   return response.data;

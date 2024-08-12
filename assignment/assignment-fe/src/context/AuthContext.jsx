@@ -29,12 +29,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await loginApi(username, password);
-      // const token = response["jwt"];
-      // const expirationTime = new Date().getTime() + 3600 * 1000;
-      // localStorage.setItem("authToken", token);
-      // localStorage.setItem("tokenExpiration", expirationTime);
-      const newUser = { ...response };
-      console.log(newUser)
+      const newUser = { ...response , token: localStorage.getItem('authToken') };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       setMessage("Login successful");
@@ -53,12 +48,13 @@ export const AuthProvider = ({ children }) => {
     try {
       const userData = { username, password, name, dob, address, createdAt };
       const response = await createAccountApi(userData);
-      // const token = response["jwt"];
-      // console.log(token)
-      // const expirationTime = new Date().getTime() + 3600 * 1000;
-      // localStorage.setItem("authToken", token);
-      // localStorage.setItem("tokenExpiration", expirationTime);
-      const newUser = { ...response };
+      const token = response.headers.get("Authorization");
+      if (token) {
+        const expirationTime = new Date().getTime() + 3600 * 1000;
+        localStorage.setItem("authToken", token.split(" ")[1]);
+        localStorage.setItem("tokenExpiration", expirationTime);
+      }
+      const newUser = { ...response.data, token: localStorage.getItem('authToken') };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       setMessage("Registration successful");

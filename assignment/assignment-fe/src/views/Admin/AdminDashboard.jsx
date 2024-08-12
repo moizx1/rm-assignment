@@ -89,7 +89,7 @@ const AdminDashboard = () => {
       } else {
         const newFormData = { ...formData, createdAt: getCurrentLocalDateTime() };
         const response = await createAccountApi(newFormData, user.token);
-        setAccounts([...accounts, response]);
+        setAccounts([...accounts, response.data]);
         fetchAccounts();
         toast.success('Account created successfully!', {className: 'bg-gray-900 bg-opacity-50 text-white'});
       }

@@ -5,6 +5,8 @@ import com.redmath.assignment.account.AccountRepository;
 import com.redmath.assignment.user.User;
 import com.redmath.assignment.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,14 +27,8 @@ public class TransactionService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Transaction> getAllTransactions() {
-        List<Transaction> transactions = transactionRepository.findAll();
-        return transactions.isEmpty() ? transactions : Collections.emptyList();
-    }
-
-    public List<Transaction> getTransactionsByAccountId(Long accountId) {
-        List<Transaction> transactions = transactionRepository.findByAccountId(accountId);
-        return transactions.isEmpty() ? transactions : Collections.emptyList();
+    public Page<Transaction> getTransactionsByAccountId(Long accountId, Pageable pageable) {
+        return transactionRepository.findByAccountId(accountId, pageable);
     }
 
     public Transaction saveTransaction(Transaction transaction) {

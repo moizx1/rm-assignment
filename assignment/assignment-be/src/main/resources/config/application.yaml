@@ -29,7 +29,9 @@ jwt:
   secret: UGEzLf3ug6HdJy7nEaVZjIxraYsbNIbt4AIBpgTAgTQ=
   expiration: 3600000
 
-
+aes:
+  secret:
+    key: ${AES_SECRET_KEY}
 logging:
   config: classpath:logback-spring.xml
 

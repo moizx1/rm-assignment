@@ -4,6 +4,7 @@ import com.redmath.assignment.filter.JwtAuthenticationEntryPoint;
 import com.redmath.assignment.filter.JwtFilter;
 import com.redmath.assignment.user.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -76,6 +77,7 @@ public class ApiSecurityConfiguration {
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
