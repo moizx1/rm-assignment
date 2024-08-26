@@ -37,7 +37,7 @@ const AccountTable = ({ accounts, onEdit, onDelete }) => {
                   </button>
                   <button
                     className={`px-2 py-1 rounded ${isDarkMode ? 'bg-red-600 bg-opacity-80 text-white hover:bg-red-500' : 'bg-red-400 text-white hover:bg-red-500'}`}
-                    onClick={() => onDelete(account.accountId)}
+                    onClick={() => onDelete(account.userId)}
                   >
                     Delete
                   </button>

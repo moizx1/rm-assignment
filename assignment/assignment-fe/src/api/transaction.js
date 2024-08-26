@@ -9,7 +9,7 @@ export const submitTransaction = async (
 ) => {
   const token = localStorage.getItem("authToken");
   const response = await axios.post(
-    `${BASE_URL}/transaction/submit`,
+    `${BASE_URL}/transactions`,
     {
       toAccountId,
       fromAccountId,
@@ -31,7 +31,7 @@ export const submitTransaction = async (
 export const getAccountDetails = async (accountNumber) => {
     const token = localStorage.getItem("authToken");
     const response = await axios.get(
-      `${BASE_URL}/account/details/${accountNumber}`,
+      `${BASE_URL}/accounts/${accountNumber}/details`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

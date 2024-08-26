@@ -1,19 +1,26 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../hooks/useTheme";
+import { FaSun, FaMoon } from 'react-icons/fa';
 import Navbar from "../Navbar/Navbar";
 import BalanceCard from "./BalanceCard";
 import TransactionHistory from "./TransactionHistory";
 import TransactionForm from "./TransactionForm";
-import { useTheme } from "../../hooks/useTheme";
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { fetchBalanceApi } from "../../api/account";
 
 
 export default function Home() {
   const { user, fetchTransactionHistory, transactionHistory } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme();
+  const [balance, setBalance] = useState();
 
+  const fetchBalance = async () => { 
+    const response = await fetchBalanceApi(user.accountId)
+    setBalance(response.balance);
+  }
   useEffect(() => {
     fetchTransactionHistory();
+    fetchBalance();
   }, []);
 
   const [showTransferForm, setShowTransferForm] = useState(false);
@@ -21,10 +28,11 @@ export default function Home() {
   const handleTransferClick = () => {
     setShowTransferForm(!showTransferForm);
   };
-
+  
   const handleTransferSubmit = (toAccountId, amount, description) => {
     console.log("Transfer submitted", { toAccountId, amount, description });
     setShowTransferForm(false);
+    fetchBalance();
   };
 
   return (
@@ -43,7 +51,7 @@ export default function Home() {
         <h1 className={`text-2xl font-bold mx-10 mb-10 mt-2 ${isDarkMode ? 'text-white' : 'text-gray-800'}`}>Welcome {user.name}</h1>
         <div className="grid grid-cols-1 m-8 gap-8">
           <BalanceCard
-            balance={parseInt(user.balance)}
+            balance={parseInt(balance)}
             onTransferClick={handleTransferClick}
             isDarkMode={isDarkMode}
           />

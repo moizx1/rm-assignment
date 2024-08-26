@@ -9,8 +9,8 @@ spring:
 #        trace: true
   datasource:
     url: jdbc:mysql://localhost:3306/FinNest
-    username: test
-    password: ${DB_PASSWORD}
+    username: root
+    password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
 #    initialization-mode: always
   jpa:
@@ -29,7 +29,9 @@ jwt:
   secret: UGEzLf3ug6HdJy7nEaVZjIxraYsbNIbt4AIBpgTAgTQ=
   expiration: 3600000
 
-
+aes:
+  secret:
+    key: ${AES_SECRET_KEY}
 logging:
   config: classpath:logback-spring.xml
 

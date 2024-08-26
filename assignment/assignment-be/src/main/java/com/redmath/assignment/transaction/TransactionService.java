@@ -5,11 +5,14 @@ import com.redmath.assignment.account.AccountRepository;
 import com.redmath.assignment.user.User;
 import com.redmath.assignment.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,12 +27,8 @@ public class TransactionService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
-    }
-
-    public List<Transaction> getTransactionsByAccountId(Long accountId) {
-        return transactionRepository.findByAccountId(accountId);
+    public Page<Transaction> getTransactionsByAccountId(Long accountId, Pageable pageable) {
+        return transactionRepository.findByAccountId(accountId, pageable);
     }
 
     public Transaction saveTransaction(Transaction transaction) {
@@ -77,7 +76,4 @@ public class TransactionService {
         accountRepository.save(toAccount);
     }
 
-    public void deleteTransaction(Long id) {
-        transactionRepository.deleteById(id);
-    }
 }

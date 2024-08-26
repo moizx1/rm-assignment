@@ -1,12 +1,14 @@
 import React from 'react';
 import { useAuth } from "../../hooks/useAuth";
 import CustomForm from "../../components/Form/CustomForm";
+import { encryptPassword } from '../../utils/utils';
 
 export default function Login() {
   const { login, message } = useAuth();
 
   const handleSubmit = async (formData) => {
-    await login(formData.username, formData.password);
+    const encryptedPassword = encryptPassword(formData.password);
+    await login(formData.username, encryptedPassword);
   };
 
   return (

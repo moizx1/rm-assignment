@@ -3,8 +3,7 @@ import { toast } from "react-toastify";
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { login as loginApi, fetchTransactionHistoryApi } from "../api/auth";
-import { createAccountApi } from "../api/account";
-import { getAccountDetails } from "../api/transaction";
+import { createAccountApi, fetchBalanceApi } from "../api/account";
 
 export const AuthContext = createContext();
 
@@ -18,11 +17,8 @@ export const AuthProvider = ({ children }) => {
       ? JSON.parse(storedUser)
       : {
           userId: null,
-          username: null,
           name: null,
           accountId: null,
-          accountNumber: null,
-          balance: null,
           role: null,
           token: localStorage.getItem("authToken"),
         };
@@ -33,11 +29,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (username, password) => {
     try {
       const response = await loginApi(username, password);
-      const token = response["jwt"];
-      const expirationTime = new Date().getTime() + 3600 * 1000;
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("tokenExpiration", expirationTime);
-      const newUser = { ...response, token };
+      const newUser = { ...response , token: localStorage.getItem('authToken') };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       setMessage("Login successful");
@@ -56,11 +48,13 @@ export const AuthProvider = ({ children }) => {
     try {
       const userData = { username, password, name, dob, address, createdAt };
       const response = await createAccountApi(userData);
-      const token = response["jwt"];
-      const expirationTime = new Date().getTime() + 3600 * 1000;
-      localStorage.setItem("authToken", token);
-      localStorage.setItem("tokenExpiration", expirationTime);
-      const newUser = { ...response, token };
+      const token = response.headers.get("Authorization");
+      if (token) {
+        const expirationTime = new Date().getTime() + 3600 * 1000;
+        localStorage.setItem("authToken", token.split(" ")[1]);
+        localStorage.setItem("tokenExpiration", expirationTime);
+      }
+      const newUser = { ...response.data, token: localStorage.getItem('authToken') };
       setUser(newUser);
       localStorage.setItem("user", JSON.stringify(newUser));
       setMessage("Registration successful");
@@ -88,8 +82,8 @@ export const AuthProvider = ({ children }) => {
         user.token
       );
       setTransactionHistory(response);
-      const updatedDetails = await getAccountDetails(user.accountNumber);
-      const updatedUser = { ...user, balance: updatedDetails.data.balance };
+      const balance = await fetchBalanceApi(user.accountId);
+      const updatedUser = { ...user, balance: balance };
       setUser(updatedUser);
       localStorage.setItem("user", JSON.stringify(updatedUser));
     } catch (error) {
@@ -103,10 +97,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem("user");
     setUser({
       userId: null,
-      username: null,
       name: null,
       accountId: null,
-      accountNumber: null,
       role: null,
       token: null,
     });

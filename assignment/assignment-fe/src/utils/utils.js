@@ -1,3 +1,14 @@
+import CryptoJS from 'crypto-js';
+
+const secretKey = import.meta.env.VITE_AES_SECRET_KEY;
+
+export const encryptPassword = (password) => {
+    return CryptoJS.AES.encrypt(password, CryptoJS.enc.Utf8.parse(secretKey), {
+        mode: CryptoJS.mode.ECB,
+        padding: CryptoJS.pad.Pkcs7
+      }).toString();
+}
+
 export const getCurrentLocalDateTime = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -25,3 +36,5 @@ export const resetForm = () => ({
     address: "",
     createdAt: null,
 });
+
+

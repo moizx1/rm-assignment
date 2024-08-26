@@ -22,8 +22,6 @@ public class Account {
     @Column(name = "account_id")
     private Long accountId;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_account_user"))
     private Long userId;
 
     private String accountNumber;

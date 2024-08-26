@@ -1,15 +1,17 @@
+/* eslint-disable react/prop-types */
 import { useTheme } from '../hooks/useTheme';
 import OutlinedInput from './TextField/OutlinedInput';
 
 const AccountForm = ({ formData, onInputChange, onSubmit, onCancel, isEditing, error }) => {
   const { isDarkMode } = useTheme();
-
+  
   return (
     <div className={`fixed inset-0 flex items-center justify-center ${isDarkMode ? 'bg-black bg-opacity-50' : 'bg-[#ffffff] bg-opacity-50'}`}>
       <div className={`p-8 rounded-lg shadow-md w-full max-w-lg ${isDarkMode ? 'bg-[#1b1b1b] border border-[#3d3d3d]' : 'bg-[#ffffff] border border-gray-300'}`}>
         <h2 className={`text-2xl font-bold mb-6 ${isDarkMode ? 'text-white' : 'text-black'}`}>
           {isEditing ? "Edit Account" : "Add Account"}
         </h2>
+      {error && <p className={`mb-4 text-center text-red-500 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{error}</p>}
         <form onSubmit={onSubmit} className="space-y-4">
           {!isEditing ? (
             <>
@@ -48,7 +50,6 @@ const AccountForm = ({ formData, onInputChange, onSubmit, onCancel, isEditing, e
           </div>
 
         </form>
-        {error && <p className={`text-red-500 ${isDarkMode ? 'text-red-400' : 'text-red-600'}`}>{error}</p>}
       </div>
     </div>
   );

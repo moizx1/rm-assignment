@@ -1,17 +1,24 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import Navbar from "../Navbar/Navbar";
-import TransactionHistory from "../Home/TransactionHistory";
 import { useTheme } from '../../hooks/useTheme';
 import { FaSun, FaMoon } from 'react-icons/fa';
+import Navbar from "../Navbar/Navbar";
+import TransactionHistory from "../Home/TransactionHistory";
+import { fetchAccountById } from "../../api/account";
 
 
 const AccountDetailsPage = () => {
+  const [ account, setAccount ] = useState({});
   const { user, fetchTransactionHistory, transactionHistory } = useAuth();
   const { isDarkMode, toggleTheme } = useTheme(); 
 
+  const fetchAccount = async () => {
+    const response = await fetchAccountById(user.accountId);
+    setAccount(response)
+  }
   useEffect(() => {
     fetchTransactionHistory();
+    fetchAccount();
   }, []);
 
   return (
@@ -32,15 +39,11 @@ const AccountDetailsPage = () => {
               <h2 className={`text-2xl font-bold mb-2 ${isDarkMode ? 'text-[#F4DBEF]' : 'text-gray-900'}`}>Personal Information</h2>    
                 <div className="flex">
                   <strong className={`w-40 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>Name:</strong>
-                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{user.name}</span>
+                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{account.name}</span>
                 </div>
                 <div className="flex">
                   <strong className={`w-40 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>Username:</strong>
-                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{user.username}</span>
-                </div>
-                <div className="flex">
-                  <strong className={`w-40 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>User ID:</strong>
-                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{user.userId}</span>
+                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{account.username}</span>
                 </div>
             </div>
             <div className="flex flex-col w-full md:w-1/2 space-y-4 pr-14">
@@ -48,15 +51,11 @@ const AccountDetailsPage = () => {
             
                 <div className="flex">
                   <strong className={`w-40 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>Account Number:</strong>
-                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{user.accountNumber}</span>
-                </div>
-                <div className="flex">
-                  <strong className={`w-40 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>Account ID:</strong>
-                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{user.accountId}</span>
+                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>{account.accountNumber}</span>
                 </div>
                 <div className="flex">
                   <strong className={`w-40 ${isDarkMode ? 'text-gray-300' : 'text-gray-800'}`}>Balance:</strong>
-                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Rs. {user.balance}</span>
+                  <span className={`${isDarkMode ? 'text-gray-200' : 'text-gray-700'}`}>Rs. {account.balance}</span>
                 </div>
             </div>
         </div>

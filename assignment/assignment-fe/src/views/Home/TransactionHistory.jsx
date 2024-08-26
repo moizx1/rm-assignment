@@ -1,6 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useTheme } from '../../hooks/useTheme'; // Adjust the path as necessary
-
+import { useTheme } from '../../hooks/useTheme';
 const TransactionHistory = ({ transactions }) => {
   const { isDarkMode } = useTheme();
 
