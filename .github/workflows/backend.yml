@@ -1,0 +1,63 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'assignment/assignment-be/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: assignment/assignment-be
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build jar
+        run: mvn clean package -DskipTests
+
+      - name: Copy jar to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: assignment/assignment-be/target/*.jar
+          target: /home/ec2-user/app/
+
+      - name: Restart app
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DB_URL: ${{ secrets.DB_URL }}
+          DB_USERNAME: ${{ secrets.DB_USERNAME }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          AES_SECRET_KEY: ${{ secrets.AES_SECRET_KEY }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
+          script: |
+            pkill -f assignment || true
+            nohup java \
+              -DDB_URL="$DB_URL" \
+              -DDB_USERNAME="$DB_USERNAME" \
+              -DDB_PASSWORD="$DB_PASSWORD" \
+              -DJWT_SECRET="$JWT_SECRET" \
+              -DAES_SECRET_KEY="$AES_SECRET_KEY" \
+              -jar /home/ec2-user/app/*.jar \
+              > /home/ec2-user/app/app.log 2>&1 &
