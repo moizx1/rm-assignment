@@ -37,6 +37,8 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           source: assignment/assignment-be/target/*.jar
           target: /home/ec2-user/app/
+          strip_components: 3   # strips assignment/assignment-be/target/ prefix
+          # jar lands at /home/ec2-user/app/<name>.jar directly
 
       - name: Restart app
         uses: appleboy/ssh-action@v1.0.3
@@ -53,6 +55,7 @@ jobs:
           envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
           script: |
             pkill -f assignment || true
+            sleep 2  # give the old process time to fully exit
             nohup java \
               -DDB_URL="$DB_URL" \
               -DDB_USERNAME="$DB_USERNAME" \
@@ -61,3 +64,4 @@ jobs:
               -DAES_SECRET_KEY="$AES_SECRET_KEY" \
               -jar /home/ec2-user/app/*.jar \
               > /home/ec2-user/app/app.log 2>&1 &
+            disown $!  # detach from shell so SSH session close doesn't SIGTERM it
