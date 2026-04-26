@@ -1,10 +1,9 @@
-import axios from "axios";
-import { API_BASE_URL } from "../constants/apiConstants";
+import api from "./api.js";
 
 export const createAccountApi = async (accountData) => {
   const authToken = localStorage.getItem("authToken");
 
-  const response = await axios.post(`${API_BASE_URL}/users`, accountData, {
+  const response = await api.post(`/users`, accountData, {
     headers: {
       "Content-Type": "application/json",
     },
@@ -14,7 +13,7 @@ export const createAccountApi = async (accountData) => {
 
 export const fetchAccountsApi = async () => {
   const authToken = localStorage.getItem("authToken");
-  const response = await axios.get(`${API_BASE_URL}/accounts`, {
+  const response = await api.get(`/accounts`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
@@ -25,7 +24,7 @@ export const fetchAccountsApi = async () => {
 
 export const fetchAccountById = async (accountId) => {
   const authToken = localStorage.getItem("authToken");
-  const response = await axios.get(`${API_BASE_URL}/accounts/${accountId}`, {
+  const response = await api.get(`/accounts/${accountId}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,
@@ -36,8 +35,8 @@ export const fetchAccountById = async (accountId) => {
 
 export const fetchBalanceApi = async (accountId) => {
   const authToken = localStorage.getItem("authToken");
-  const response = await axios.get(
-    `${API_BASE_URL}/accounts/${accountId}/balance`,
+  const response = await api.get(
+    `/accounts/${accountId}/balance`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -50,8 +49,8 @@ export const fetchBalanceApi = async (accountId) => {
 
 export const updateAccountApi = async (accountData) => {
   const authToken = localStorage.getItem("authToken");
-  const response = await axios.patch(
-    `${API_BASE_URL}/accounts/${accountData.userId}`,
+  const response = await api.patch(
+    `/accounts/${accountData.userId}`,
     accountData,
     {
       headers: {
@@ -65,7 +64,7 @@ export const updateAccountApi = async (accountData) => {
 
 export const deleteAccountApi = async (userId) => {
   const authToken = localStorage.getItem("authToken");
-  const response = await axios.delete(`${API_BASE_URL}/accounts/${userId}`, {
+  const response = await api.delete(`/accounts/${userId}`, {
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${authToken}`,

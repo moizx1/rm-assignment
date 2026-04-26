@@ -1,5 +1,4 @@
-import axios from "axios";
-import { API_BASE_URL as BASE_URL } from "../constants/apiConstants"
+import api from "./api.js";
 
 export const submitTransaction = async (
   fromAccountId,
@@ -8,8 +7,8 @@ export const submitTransaction = async (
   description
 ) => {
   const token = localStorage.getItem("authToken");
-  const response = await axios.post(
-    `${BASE_URL}/transactions`,
+  const response = await api.post(
+    `/transactions`,
     {
       toAccountId,
       fromAccountId,
@@ -30,8 +29,8 @@ export const submitTransaction = async (
 
 export const getAccountDetails = async (accountNumber) => {
     const token = localStorage.getItem("authToken");
-    const response = await axios.get(
-      `${BASE_URL}/accounts/${accountNumber}/details`,
+    const response = await api.get(
+      `/accounts/${accountNumber}/details`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }

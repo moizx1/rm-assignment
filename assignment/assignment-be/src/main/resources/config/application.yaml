@@ -1,6 +1,6 @@
 spring:
   config:
-    import: file:env.properties
+    import: classpath:/config/env.properties
   #  h2:
 #    console:
 #      enabled: true
@@ -8,10 +8,17 @@ spring:
 #        web-allow-others: true
 #        trace: true
   datasource:
-    url: jdbc:mysql://localhost:3306/FinNest
-    username: root
-    password: admin
-    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://localhost:3306/FinNest
+#    username: root
+#    password: admin
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+#    url: jdbc:postgresql://localhost:5432/finnest
+#    username: finnest_user
+#    password: admin
+    driver-class-name: org.postgresql.Driver
 #    initialization-mode: always
   jpa:
     hibernate:
@@ -26,7 +33,7 @@ api:
     ignored: /swagger-ui/**,/h2-console,/h2-console/**,/v3/api-docs,/v2/api-docs
 
 jwt:
-  secret: UGEzLf3ug6HdJy7nEaVZjIxraYsbNIbt4AIBpgTAgTQ=
+  secret: ${JWT_SECRET}
   expiration: 3600000
 
 aes:
