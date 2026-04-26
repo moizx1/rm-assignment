@@ -14,7 +14,7 @@ const AccountDetailsPage = () => {
 
   const fetchAccount = async () => {
     const response = await fetchAccountById(user.accountId);
-    setAccount(response)
+    setAccount(response);
   }
   useEffect(() => {
     fetchTransactionHistory();

@@ -1,9 +1,8 @@
-import axios from "axios";
-import { API_BASE_URL } from "../constants/apiConstants";
+import api from "./api.js";
 
 export const login = async (username, password) => {
-  const response = await axios.post(
-    `${API_BASE_URL}/auth/login`,
+  const response = await api.post(
+    `/auth/login`,
     { username: username, password: password },
     {
       headers: { "Content-Type": "application/json" },
@@ -19,8 +18,8 @@ export const login = async (username, password) => {
 };
 
 export const fetchTransactionHistoryApi = async (accountId, token) => {
-  const response = await axios.get(
-    `${API_BASE_URL}/transactions/${accountId}`,
+  const response = await api.get(
+    `/transactions/${accountId}`,
     {
       headers: { Authorization: `Bearer ${token}` },
     }
