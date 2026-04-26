@@ -1,0 +1,24 @@
+2024-08-06 15:28:38.201 [main] INFO  liquibase.changelog - Reading from FinNest.databasechangelog
+2024-08-06 15:28:38.261 [main] INFO  liquibase.ui - Database is up to date, no changesets to execute
+2024-08-06 15:28:38.261 [main] INFO  liquibase.changelog - Reading from FinNest.databasechangelog
+2024-08-06 15:28:38.261 [main] INFO  liquibase.util - UPDATE SUMMARY
+2024-08-06 15:28:38.261 [main] INFO  liquibase.util - Run:                          0
+2024-08-06 15:28:38.261 [main] INFO  liquibase.util - Previously run:               3
+2024-08-06 15:28:38.261 [main] INFO  liquibase.util - Filtered out:                 0
+2024-08-06 15:28:38.277 [main] INFO  liquibase.util - -------------------------------
+2024-08-06 15:28:38.277 [main] INFO  liquibase.util - Total change sets:            3
+2024-08-06 15:28:38.277 [main] INFO  liquibase.util - Update summary generated
+2024-08-06 15:28:38.292 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2024-08-06 15:28:38.292 [main] INFO  liquibase.command - Command execution complete
+2024-08-06 15:30:11.965 [main] INFO  liquibase.changelog - Reading from FinNest.databasechangelog
+2024-08-06 15:30:12.042 [main] INFO  liquibase.ui - Database is up to date, no changesets to execute
+2024-08-06 15:30:12.045 [main] INFO  liquibase.changelog - Reading from FinNest.databasechangelog
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - UPDATE SUMMARY
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - Run:                          0
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - Previously run:               3
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - Filtered out:                 0
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - -------------------------------
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - Total change sets:            3
+2024-08-06 15:30:12.045 [main] INFO  liquibase.util - Update summary generated
+2024-08-06 15:30:12.065 [main] INFO  liquibase.lockservice - Successfully released change log lock
+2024-08-06 15:30:12.065 [main] INFO  liquibase.command - Command execution complete
