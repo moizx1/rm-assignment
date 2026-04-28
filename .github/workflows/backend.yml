@@ -53,15 +53,31 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
-          script: |
-            pkill -f assignment || true
-            sleep 2  # give the old process time to fully exit
-            nohup java \
-              -DDB_URL="$DB_URL" \
-              -DDB_USERNAME="$DB_USERNAME" \
-              -DDB_PASSWORD="$DB_PASSWORD" \
-              -DJWT_SECRET="$JWT_SECRET" \
-              -DAES_SECRET_KEY="$AES_SECRET_KEY" \
-              -jar /home/ec2-user/app/*.jar \
-              > /home/ec2-user/app/app.log 2>&1 &
-            disown $!  # detach from shell so SSH session close doesn't SIGTERM it
+        script: |
+          APP_JAR=$(find /home/ec2-user/app -maxdepth 1 -name "*.jar" | head -n 1)
+
+          if [ -z "$APP_JAR" ]; then
+            echo "No jar found"
+            exit 1
+          fi
+
+          PID=$(pgrep -f "$APP_JAR" || true)
+
+          if [ ! -z "$PID" ]; then
+            echo "Stopping old app PID: $PID"
+            kill $PID
+            sleep 3
+          fi
+
+          echo "Starting app: $APP_JAR"
+
+          nohup java \
+            -DDB_URL="$DB_URL" \
+            -DDB_USERNAME="$DB_USERNAME" \
+            -DDB_PASSWORD="$DB_PASSWORD" \
+            -DJWT_SECRET="$JWT_SECRET" \
+            -DAES_SECRET_KEY="$AES_SECRET_KEY" \
+            -jar "$APP_JAR" \
+            > /home/ec2-user/app/app.log 2>&1 < /dev/null &
+
+          echo "Started"
