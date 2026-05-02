@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: classpath:/config/env.properties
   #  h2:
 #    console:
 #      enabled: true
