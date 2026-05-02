@@ -34,7 +34,7 @@ jobs:
 
       - name: Build
         env:
-          VITE_API_URL: http://${{ secrets.EC2_HOST }}:8080
+          VITE_API_URL: http://${{ secrets.EC2_HOST }}:8080/api/v2
         run: npm run build
 
       - name: Configure AWS credentials
