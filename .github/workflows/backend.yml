@@ -70,9 +70,9 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
           script: |
-            cd /home/ec2-user/app
-
-            APP_JAR=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
+            cd /home/ec2-user/app/assignment/assignment-be
+            
+            APP_JAR=$(find target -maxdepth 1 -name "*.jar" | head -n 1)
 
             if [ -z "$APP_JAR" ]; then
               echo "No jar found"
