@@ -26,21 +26,33 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Build jar
+      - name: Build JAR
         run: mvn clean package -DskipTests
 
-      - name: Copy jar to EC2
+      - name: Clean deployment directory
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            mkdir -p /home/ec2-user/app
+            rm -f /home/ec2-user/app/*.jar
+            rm -f /home/ec2-user/app/Dockerfile
+
+      - name: Copy artifacts to EC2
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: assignment/assignment-be/target/*.jar
+          source: |
+            assignment/assignment-be/target/*.jar
+            assignment/assignment-be/Dockerfile
           target: /home/ec2-user/app/
-          strip_components: 3   # strips assignment/assignment-be/target/ prefix
-          # jar lands at /home/ec2-user/app/<name>.jar directly
+          strip_components: 2
 
-      - name: Restart app
+      - name: Deploy Docker Container
         uses: appleboy/ssh-action@v1.0.3
         env:
           DB_URL: ${{ secrets.DB_URL }}
@@ -54,30 +66,41 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
           script: |
-            APP_JAR=$(find /home/ec2-user/app -maxdepth 1 -name "*.jar" | head -n 1)
+            cd /home/ec2-user/app
+
+            APP_JAR=$(find . -maxdepth 1 -name "*.jar" | head -n 1)
 
             if [ -z "$APP_JAR" ]; then
               echo "No jar found"
               exit 1
             fi
 
-            PID=$(pgrep -f "$APP_JAR" || true)
+            echo "Stopping existing container..."
+            docker stop finnest-backend || true
+            docker rm finnest-backend || true
 
-            if [ ! -z "$PID" ]; then
-              echo "Stopping old app PID: $PID"
-              kill $PID
-              sleep 3
-            fi
+            echo "Removing old image..."
+            docker rmi finnest-backend || true
 
-            echo "Starting app: $APP_JAR"
+            echo "Building Docker image..."
+            docker build -t finnest-backend .
 
-            nohup java \
-              -DDB_URL="$DB_URL" \
-              -DDB_USERNAME="$DB_USERNAME" \
-              -DDB_PASSWORD="$DB_PASSWORD" \
-              -DJWT_SECRET="$JWT_SECRET" \
-              -DAES_SECRET_KEY="$AES_SECRET_KEY" \
-              -jar "$APP_JAR" \
-              > /home/ec2-user/app/app.log 2>&1 < /dev/null &
+            echo "Starting container..."
+            docker run -d \
+              --name finnest-backend \
+              --restart unless-stopped \
+              -p 8080:8080 \
+              -e DB_URL="$DB_URL" \
+              -e DB_USERNAME="$DB_USERNAME" \
+              -e DB_PASSWORD="$DB_PASSWORD" \
+              -e JWT_SECRET="$JWT_SECRET" \
+              -e AES_SECRET_KEY="$AES_SECRET_KEY" \
+              finnest-backend
 
-            echo "Started"
+            echo "Running containers:"
+            docker ps
+
+            echo "Recent logs:"
+            docker logs --tail 50 finnest-backend
+
+            echo "Deployment completed"
