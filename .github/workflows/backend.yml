@@ -29,6 +29,13 @@ jobs:
       - name: Build JAR
         run: mvn clean package -DskipTests
 
+      - name: Debug build output
+        run: |
+          pwd
+          find . -name "*.jar"
+          ls -la
+          ls -la target
+
       - name: Clean deployment directory
         uses: appleboy/ssh-action@v1.0.3
         with:
