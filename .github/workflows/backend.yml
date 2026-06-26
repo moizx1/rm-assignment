@@ -29,32 +29,31 @@ jobs:
       - name: Build JAR
         run: mvn clean package -DskipTests
 
-      - name: Debug build output
+      - name: Prepare deployment package
         run: |
-          pwd
-          find . -name "*.jar"
-          ls -la
-          ls -la target
+          mkdir deploy
+          cp target/*.jar deploy/
+          cp Dockerfile deploy/
 
-      - name: Clean deployment directory
+      - name: Clean EC2 deployment directory
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            rm -rf /home/ec2-user/app
             mkdir -p /home/ec2-user/app
-            rm -f /home/ec2-user/app/*.jar
-            rm -f /home/ec2-user/app/Dockerfile
 
-      - name: Copy artifacts to EC2
+      - name: Copy deployment package
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          source: "assignment/assignment-be/target/*.jar,assignment/assignment-be/Dockerfile"
+          source: "assignment/assignment-be/deploy/*"
           target: /home/ec2-user/app/
+          strip_components: 3
 
       - name: Deploy Docker Container
         uses: appleboy/ssh-action@v1.0.3
@@ -70,26 +69,17 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
           script: |
-            cd /home/ec2-user/app/assignment/assignment-be
-            
-            APP_JAR=$(find target -maxdepth 1 -name "*.jar" | head -n 1)
+            cd /home/ec2-user/app
 
-            if [ -z "$APP_JAR" ]; then
-              echo "No jar found"
-              exit 1
-            fi
+            echo "Deployment directory:"
+            ls -la
 
-            echo "Stopping existing container..."
             docker stop finnest-backend || true
             docker rm finnest-backend || true
-
-            echo "Removing old image..."
             docker rmi finnest-backend || true
 
-            echo "Building Docker image..."
             docker build -t finnest-backend .
 
-            echo "Starting container..."
             docker run -d \
               --name finnest-backend \
               --restart unless-stopped \
@@ -101,10 +91,5 @@ jobs:
               -e AES_SECRET_KEY="$AES_SECRET_KEY" \
               finnest-backend
 
-            echo "Running containers:"
-            docker ps
-
-            echo "Recent logs:"
-            docker logs --tail 50 finnest-backend
-
-            echo "Deployment completed"
+            docker ps -a
+            docker logs --tail=100 finnest-backend
