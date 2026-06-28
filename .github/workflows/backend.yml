@@ -33,6 +33,19 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Set Image Tag
+        run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
+
+      - name: Build Docker Image
+        run: |
+          docker build \
+            -t ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG \
+            .
+
+      - name: Push Docker Image
+        run: |
+          docker push ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
+
       - name: Setup Java
         uses: actions/setup-java@v4
         with:
