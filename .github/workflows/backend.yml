@@ -42,6 +42,15 @@ jobs:
       - name: Build JAR
         run: mvn clean package -DskipTests
 
+      - name: Debug workspace
+        run: |
+          pwd
+          ls -la
+          echo "----- target -----"
+          ls -la target || true
+          echo "----- find -----"
+          find . -maxdepth 2 -type f
+          
       - name: Build Docker Image
         run: |
           docker build \
