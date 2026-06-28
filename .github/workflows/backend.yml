@@ -41,15 +41,6 @@ jobs:
 
       - name: Build JAR
         run: mvn clean package -DskipTests
-
-      - name: Debug workspace
-        run: |
-          pwd
-          ls -la
-          echo "----- target -----"
-          ls -la target || true
-          echo "----- find -----"
-          find . -maxdepth 2 -type f
           
           
       - name: Build Docker Image
@@ -108,6 +99,10 @@ jobs:
               --username AWS \
               --password-stdin \
               592404497108.dkr.ecr.eu-north-1.amazonaws.com
+            
+            docker compose down --remove-orphans || true
+  
+            docker rm -f finnest-backend || true
 
             docker compose pull
 
