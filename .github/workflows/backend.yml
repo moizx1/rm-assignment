@@ -31,6 +31,15 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Build JAR
+        run: mvn clean package -DskipTests
+
       - name: Set Image Tag
         run: echo "IMAGE_TAG=${GITHUB_SHA::7}" >> $GITHUB_ENV
 
@@ -44,44 +53,10 @@ jobs:
         run: |
           docker push ${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - name: Build JAR
-        run: mvn clean package -DskipTests
-
-      - name: Prepare deployment package
-        run: |
-          mkdir deploy
-          cp target/*.jar deploy/
-          cp Dockerfile deploy/
-
-      - name: Clean EC2 deployment directory
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            rm -rf /home/ec2-user/app
-            mkdir -p /home/ec2-user/app
-
-      - name: Copy deployment package
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          source: "assignment/assignment-be/deploy/*"
-          target: /home/ec2-user/app/
-          strip_components: 3
-
-      - name: Deploy Docker Container
+      - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.3
         env:
+          IMAGE_TAG: ${{ env.IMAGE_TAG }}
           DB_URL: ${{ secrets.DB_URL }}
           DB_USERNAME: ${{ secrets.DB_USERNAME }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
@@ -91,19 +66,27 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
-          envs: DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
+          envs: IMAGE_TAG,DB_URL,DB_USERNAME,DB_PASSWORD,JWT_SECRET,AES_SECRET_KEY
           script: |
-            cd /home/ec2-user/app
+            IMAGE_URI=${{ secrets.ECR_REPOSITORY }}:$IMAGE_TAG
 
-            echo "Deployment directory:"
-            ls -la
+            echo "Logging into Amazon ECR..."
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+              docker login \
+              --username AWS \
+              --password-stdin \
+              592404497108.dkr.ecr.eu-north-1.amazonaws.com
 
+            echo "Pulling latest image..."
+            docker pull $IMAGE_URI
+
+            echo "Stopping old container..."
             docker stop finnest-backend || true
+
+            echo "Removing old container..."
             docker rm finnest-backend || true
-            docker rmi finnest-backend || true
 
-            docker build -t finnest-backend .
-
+            echo "Starting new container..."
             docker run -d \
               --name finnest-backend \
               --restart unless-stopped \
@@ -113,7 +96,10 @@ jobs:
               -e DB_PASSWORD="$DB_PASSWORD" \
               -e JWT_SECRET="$JWT_SECRET" \
               -e AES_SECRET_KEY="$AES_SECRET_KEY" \
-              finnest-backend
+              $IMAGE_URI
 
-            docker ps -a
-            docker logs --tail=100 finnest-backend
+            echo "Running containers:"
+            docker ps
+
+            echo "Container logs:"
+            docker logs --tail 50 finnest-backend
